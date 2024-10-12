@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private GameInput gameInput;
+    [SerializeField] private Transform kitchenObjectHoldPoint;
     [SerializeField] private LayerMask countersLayerMask;
+
+    private KitchenObject kitchenObject;
 
     private Vector3 lastInteractDir;
 
@@ -31,9 +34,9 @@ public class Player : MonoBehaviour
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
-            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
             {
-                clearCounter.Interact();
+                baseCounter.Interact(this);
                 //if (clearCounter != selectedCounter)
                 //{
                 //    SetSelectedCounter(clearCounter);
@@ -94,9 +97,9 @@ public class Player : MonoBehaviour
         }
 
         //isWalking = moveDir != Vector3.zero;
-        //float rotateSpeed = 8.5f;
+        float rotateSpeed = 8.5f;
 
-        //transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
 
     private void HandleInteractions()
@@ -113,7 +116,7 @@ public class Player : MonoBehaviour
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
-            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
             {
                 //if (clearCounter != selectedCounter)
                 //{
@@ -130,4 +133,29 @@ public class Player : MonoBehaviour
             //SetSelectedCounter(null);
         }
     }
+
+    public Transform GetKitchenObjectFollowTransform()
+    {
+        return kitchenObjectHoldPoint;
+    }
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        kitchenObject = null;
+    }
+
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
+    } 
 }
