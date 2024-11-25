@@ -23,6 +23,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
 
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
@@ -56,6 +57,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
 
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
